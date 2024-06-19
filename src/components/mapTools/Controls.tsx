@@ -12,7 +12,7 @@ export default function Controls() {
           resetTransform();
         }}
       >
-        Сбросить
+        Reset
       </Button>
     </section>
   );
