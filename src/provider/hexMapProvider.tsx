@@ -14,6 +14,14 @@ type MapContextType = {
 
   currentCursor: string;
   setCurrentCursor: (value: string) => void;
+
+  addBrush: boolean;
+  setAddBrush: (value: boolean) => void;
+
+  customBrushes: Array<{ title: string; color: string; clickable: boolean }>;
+  setCustomBrushes: (
+    value: Array<{ title: string; color: string; clickable: boolean }>
+  ) => void;
 };
 
 const initialMapState = {
@@ -30,8 +38,16 @@ const initialMapState = {
   currentHex: null,
   setCurrentHex: () => {},
 
-  currentCursor: "select",
+  currentCursor: localStorage.getItem("userCursor") || "select",
   setCurrentCursor: () => {},
+
+  addBrush: false,
+  setAddBrush: () => {},
+
+  customBrushes: localStorage.getItem("brushes")
+    ? JSON.parse(localStorage.getItem("brushes")!)
+    : [],
+  setCustomBrushes: () => {},
 };
 
 const MapContext = createContext<MapContextType>(initialMapState);
@@ -48,6 +64,11 @@ const MapProvider = ({ children }: { children: React.ReactNode }) => {
     initialMapState.currentCursor
   );
 
+  const [addBrush, setAddBrush] = useState<boolean>(initialMapState.addBrush);
+
+  const [customBrushes, setCustomBrushes] = useState(
+    initialMapState.customBrushes
+  );
   return (
     <MapContext.Provider
       value={{
@@ -59,6 +80,12 @@ const MapProvider = ({ children }: { children: React.ReactNode }) => {
 
         currentCursor,
         setCurrentCursor,
+
+        addBrush,
+        setAddBrush,
+
+        customBrushes,
+        setCustomBrushes,
       }}
     >
       {children}

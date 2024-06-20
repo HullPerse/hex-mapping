@@ -5,9 +5,11 @@ import Controls from "@/components/mapTools/Controls";
 import CurrentHex from "@/components/mapTools/CurrentHex";
 import UserControls from "@/components/mapTools/UserControls";
 import ControlsMenu from "@/components/mapTools/ControlsMenu";
+import CustomBrush from "./components/mapTools/MenuComponents/CustomBrush";
+import { Separator } from "./components/ui/separator";
 
 function App() {
-  const { hexParams, currentHex, setCurrentHex, currentCursor } =
+  const { hexParams, currentHex, setCurrentHex, currentCursor, addBrush } =
     useContext(MapContext);
 
   return (
@@ -25,15 +27,16 @@ function App() {
         centerOnInit
       >
         {/* Controls */}
-        <section className="flex flex-col md:w-[680px] h-full border-2 border-white rounded gap-2">
+        <section className="flex flex-col md:w-[680px] h-full border-2 border-white rounded gap-2 overflow-y-auto overflow-x-hidden">
           <UserControls />
 
           {currentCursor && <ControlsMenu />}
+          <Separator className="w-full bg-white py-[1px]" />
+          {addBrush && <CustomBrush />}
 
           {/* <CurrentHex /> */}
-          <div className="flex w-full h-fit px-2 my-2 items-end border-y-2 border-white">
-            <div>asd</div>
-          </div>
+
+          {CurrentHex && <CurrentHex />}
           <Controls />
         </section>
 

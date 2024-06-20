@@ -22,10 +22,16 @@ export default function UserControls() {
     },
   };
 
+  const handleCursorChange = (e: string) => {
+    localStorage.setItem("userCursor", e);
+
+    return setCurrentCursor(e);
+  };
+
   return (
     <ToggleGroup
       defaultValue={currentCursor}
-      onValueChange={setCurrentCursor}
+      onValueChange={handleCursorChange}
       type="single"
       className="inline-flex w-full justify-start items-center border-b-2 border-white -gap-1"
     >

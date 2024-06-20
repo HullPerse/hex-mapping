@@ -75,6 +75,18 @@
   animation: spin 2s ease-in-out infinite;
 }
 
+.hexagonOverlay:hover:before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  height: 104px;
+  width: 104px;
+  background-color: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
 .hexagon {
   width: 100px;
   height: 100px;
