@@ -16,6 +16,10 @@ export default function UserControls() {
       title: "brush",
       image: "brush",
     },
+    eraser: {
+      title: "eraser",
+      image: "eraser",
+    },
     settings: {
       title: "settings",
       image: "settings",

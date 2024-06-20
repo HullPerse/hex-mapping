@@ -8,9 +8,82 @@ import ControlsMenu from "@/components/mapTools/ControlsMenu";
 import CustomBrush from "./components/mapTools/MenuComponents/CustomBrush";
 import { Separator } from "./components/ui/separator";
 
+interface HexBrush {
+  id: string;
+  title: string;
+  color: string;
+  clickable: boolean;
+}
+
+interface CustomHex {
+  id: string;
+  type: HexBrush;
+}
+
 function App() {
-  const { hexParams, currentHex, setCurrentHex, currentCursor, addBrush } =
-    useContext(MapContext);
+  const {
+    hexParams,
+    currentHex,
+    setCurrentHex,
+    currentCursor,
+    addBrush,
+    currentBrush,
+    customHex,
+    setCustomHex,
+  } = useContext(MapContext);
+
+  const handleClick = (rowIndex: number, colIndex: number) => {
+    if (!currentCursor) return;
+
+    if (currentCursor === "brush") {
+      if (!currentBrush) return;
+      const hexId = `${rowIndex}-${colIndex}`;
+
+      const hexArray: CustomHex[] = customHex ? [...customHex] : [];
+
+      const existingHex = hexArray.find(hex => hex.id === hexId);
+      if (existingHex) {
+        hexArray.splice(hexArray.indexOf(existingHex), 1);
+      }
+
+      hexArray.push({
+        id: hexId,
+        type: {
+          id: currentBrush.id,
+          title: currentBrush.title,
+          color: currentBrush.color,
+          clickable: currentBrush.clickable,
+        },
+      });
+
+      localStorage.setItem("customHex", JSON.stringify(hexArray));
+      setCustomHex(hexArray);
+      return;
+    }
+
+    if (currentCursor == "eraser") {
+      const hexId = `${rowIndex}-${colIndex}`;
+      const hexArray: CustomHex[] = customHex ? [...customHex] : [];
+      const existingHex = hexArray.find(hex => hex.id === hexId);
+      if (existingHex) {
+        hexArray.splice(hexArray.indexOf(existingHex), 1);
+        localStorage.setItem("customHex", JSON.stringify(hexArray));
+        setCustomHex(hexArray);
+      }
+      return;
+    }
+
+    if (currentCursor === "select") {
+      const selectedHexId = `${rowIndex}-${colIndex}`;
+      if (currentHex === selectedHexId) {
+        setCurrentHex(null);
+      } else {
+        setCurrentHex(selectedHexId);
+      }
+
+      return;
+    }
+  };
 
   return (
     <main
@@ -32,11 +105,11 @@ function App() {
 
           {currentCursor && <ControlsMenu />}
           <Separator className="w-full bg-white py-[1px]" />
-          {addBrush && <CustomBrush />}
+          {currentCursor == "brush" && addBrush && <CustomBrush />}
 
           {/* <CurrentHex /> */}
 
-          {CurrentHex && <CurrentHex />}
+          {currentHex && <CurrentHex />}
           <Controls />
         </section>
 
@@ -50,32 +123,30 @@ function App() {
               key={rowIndex + 1}
               className="row flex justify-center items-center w-full "
             >
-              {Array.from({ length: hexParams.hexWidth }).map((_, colIndex) => (
-                <div
-                  key={colIndex + 1}
-                  id={`${rowIndex + 1}-${colIndex + 1}`}
-                  className={`hexagon hover:transition-none hover:delay-0 cursor-pointer ${
-                    currentHex == `${rowIndex}-${colIndex}`
-                      ? "after:bg-white/20"
-                      : "after:bg-black hover:bg-white"
-                  }`}
-                  onClick={() => {
-                    if (!currentCursor) return;
-
-                    if (currentCursor == "select") {
-                      if (currentHex == `${rowIndex}-${colIndex}`) {
-                        return setCurrentHex(null);
-                      }
-
-                      setCurrentHex(`${rowIndex}-${colIndex}`);
-                    }
-                  }}
-                >
-                  <div className="flex w-full h-full items-center justify-center">
-                    {"Current Hex"}
+              {Array.from({ length: hexParams.hexWidth }).map((_, colIndex) => {
+                const hex = customHex?.filter(
+                  hex => hex.id == `${rowIndex}-${colIndex}`
+                )[0];
+                return (
+                  <div
+                    key={colIndex + 1}
+                    id={`${rowIndex + 1}-${colIndex + 1}`}
+                    className={`hexagon hover:transition-none hover:delay-0 cursor-pointer ${`after:bg-[hex(#FFA500)]`} ${
+                      currentHex == `${rowIndex}-${colIndex}`
+                        ? "after:bg-white/20"
+                        : "after:bg-black hover:bg-white"
+                    }`}
+                    style={{
+                      backgroundColor: hex?.type.color || "",
+                    }}
+                    onClick={() => handleClick(rowIndex, colIndex)}
+                  >
+                    <div className="flex w-full h-full items-center justify-center">
+                      {"Current Hex"}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ))}
         </TransformComponent>

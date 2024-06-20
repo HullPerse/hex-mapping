@@ -4,6 +4,7 @@ import { useContext, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import { Switch } from "@/components/ui/switch";
 import { MapContext } from "@/provider/hexMapProvider";
+import { uid } from "@/lib/utils";
 
 export default function CustomBrush() {
   const { setAddBrush, customBrushes, setCustomBrushes } =
@@ -19,14 +20,21 @@ export default function CustomBrush() {
     const title = titleRef.current?.value;
     const clickable = switchRef.current?.getAttribute("data-state");
 
+    const id = uid();
+
     const clickableBoolean = clickable === "checked" ? true : false;
 
-    const brushesArray: { title: string; color: string; clickable: boolean }[] =
-      [];
+    const brushesArray: {
+      id: string;
+      title: string;
+      color: string;
+      clickable: boolean;
+    }[] = [];
 
     if (!title || !color) return;
     if (!customBrushes) {
       brushesArray.push({
+        id: id,
         title: title,
         color: color,
         clickable: clickableBoolean,
@@ -34,6 +42,7 @@ export default function CustomBrush() {
     } else {
       brushesArray.push(...customBrushes);
       brushesArray.push({
+        id: id,
         title: title,
         color: color,
         clickable: clickableBoolean,
@@ -61,7 +70,7 @@ export default function CustomBrush() {
       </div>
       <div className="inline-flex justify-between px-2">
         <section className="flex flex-grow justify-center">
-          <div className="border border-white rounded items-center justify-center">
+          <div className="max-h-[151px] border border-white rounded items-center justify-center">
             <div
               className={`flex hexagon items-center justify-center delay-0 transition-none border ${
                 !color && "after:bg-black"
@@ -75,11 +84,18 @@ export default function CustomBrush() {
             </p>
           </div>
         </section>
-        <HexColorPicker
-          color={color ? color : ""}
-          onChange={setColor}
-          className=""
-        />
+        <div className="flex flex-col">
+          <HexColorPicker color={color ? color : ""} onChange={setColor} />
+          <Input
+            value={color ? color : ""}
+            /* @ts-expect-error ts-migrate(2322) */
+            onInput={e => setColor(e.target.value)}
+            type="text"
+            placeholder="Title"
+            className="w-full rounded active:outline-none active:border-white focus:outline-none focus:border-white border-white mt-2"
+            autoFocus
+          />
+        </div>
       </div>
       <section className="inline-flex w-full mx-2 gap-2">
         <Switch ref={switchRef} />
