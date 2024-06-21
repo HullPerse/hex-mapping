@@ -99,7 +99,6 @@ function App() {
         disablePadding
         centerOnInit
       >
-        {/* Controls */}
         <section className="flex flex-col md:w-[680px] h-full border-2 border-white rounded gap-2 overflow-y-auto overflow-x-hidden">
           <UserControls />
 
@@ -113,7 +112,6 @@ function App() {
           <Controls />
         </section>
 
-        {/* Map Editor */}
         <TransformComponent
           wrapperStyle={{ width: "100%", height: "100%" }}
           wrapperClass="flex w-full h-full border-2 border-white rounded"
@@ -131,8 +129,10 @@ function App() {
                   <div
                     key={colIndex + 1}
                     id={`${rowIndex + 1}-${colIndex + 1}`}
-                    className={`hexagon hover:transition-none hover:delay-0 cursor-pointer ${`after:bg-[hex(#FFA500)]`} ${
-                      currentHex == `${rowIndex}-${colIndex}`
+                    className={`hexagon hover:transition-none hover:delay-0 hover:cursor-pointer ${
+                      hex?.type.color
+                        ? `after:bg-[${hex.type.color}]`
+                        : currentHex == `${rowIndex}-${colIndex}`
                         ? "after:bg-white/20"
                         : "after:bg-black hover:bg-white"
                     }`}
@@ -142,7 +142,7 @@ function App() {
                     onClick={() => handleClick(rowIndex, colIndex)}
                   >
                     <div className="flex w-full h-full items-center justify-center">
-                      {"Current Hex"}
+                      {currentHex == `${rowIndex}-${colIndex}` && "Current Hex"}
                     </div>
                   </div>
                 );

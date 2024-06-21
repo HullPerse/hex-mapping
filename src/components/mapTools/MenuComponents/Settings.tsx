@@ -3,8 +3,13 @@ import { Input } from "@/components/ui/input";
 import { MapContext } from "@/provider/hexMapProvider";
 import { useContext, useRef } from "react";
 
+interface hexProps {
+  id: string;
+  type: { id: string; title: string; color: string; clickable: boolean };
+}
+
 export default function Settings() {
-  const { hexParams, setHexParams } = useContext(MapContext);
+  const { hexParams, setHexParams, setCustomHex } = useContext(MapContext);
 
   const HeightRef = useRef<HTMLInputElement>(null);
   const WidthRef = useRef<HTMLInputElement>(null);
@@ -25,6 +30,21 @@ export default function Settings() {
         JSON.stringify({ ...hexParams, hexHeight: Height, hexWidth: Width })
       );
     }
+
+    const hexList = localStorage.getItem("customHex");
+
+    if (!hexList) return;
+
+    const filteredHexList = JSON.parse(hexList).filter((hex: hexProps) => {
+      const [hexRow, hexCol] = hex.id.split("-").map(Number);
+
+      if (hexRow < Height && hexCol < Width) return hex;
+    });
+
+    setCustomHex(filteredHexList as hexProps[]);
+
+    localStorage.setItem("customHex", JSON.stringify(filteredHexList));
+    return;
   };
 
   return (

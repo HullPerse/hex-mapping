@@ -13,6 +13,8 @@ export default function ControlsMeny() {
       return <Brush />;
     case "settings":
       return <Settings />;
+    case "eraser":
+      return;
     default:
       return <Select />;
   }
