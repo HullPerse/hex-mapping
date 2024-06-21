@@ -6,7 +6,6 @@ import CurrentHex from "@/components/mapTools/CurrentHex";
 import UserControls from "@/components/mapTools/UserControls";
 import ControlsMenu from "@/components/mapTools/ControlsMenu";
 import CustomBrush from "./components/mapTools/MenuComponents/CustomBrush";
-import { Separator } from "./components/ui/separator";
 import CustomBrushEdit from "./components/mapTools/MenuComponents/CustomBrushEdit";
 
 interface HexBrush {
@@ -104,13 +103,10 @@ function App() {
           <UserControls />
 
           {currentCursor && <ControlsMenu />}
-          <Separator className="w-full bg-white py-[1px]" />
           {currentCursor == "brush" && addBrush && <CustomBrush />}
           {currentCursor == "brush" &&
             currentBrush &&
             !["1", "2"].includes(currentBrush.id) && <CustomBrushEdit />}
-
-          {/* <CurrentHex /> */}
 
           {currentHex && <CurrentHex />}
           <Controls />

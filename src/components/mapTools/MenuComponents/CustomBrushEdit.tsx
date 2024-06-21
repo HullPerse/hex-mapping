@@ -52,7 +52,7 @@ export default function CustomBrushEdit() {
   };
 
   return (
-    <section className="flex flex-col w-full justify-center border-b-2 border-white py-1 gap-4">
+    <section className="flex flex-col w-full justify-center border-y-2 border-white py-1 gap-4">
       <div className="flex w-full">
         <Input
           ref={titleRef}
