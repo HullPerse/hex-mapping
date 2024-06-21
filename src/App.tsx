@@ -7,6 +7,7 @@ import UserControls from "@/components/mapTools/UserControls";
 import ControlsMenu from "@/components/mapTools/ControlsMenu";
 import CustomBrush from "./components/mapTools/MenuComponents/CustomBrush";
 import { Separator } from "./components/ui/separator";
+import CustomBrushEdit from "./components/mapTools/MenuComponents/CustomBrushEdit";
 
 interface HexBrush {
   id: string;
@@ -105,6 +106,9 @@ function App() {
           {currentCursor && <ControlsMenu />}
           <Separator className="w-full bg-white py-[1px]" />
           {currentCursor == "brush" && addBrush && <CustomBrush />}
+          {currentCursor == "brush" &&
+            currentBrush &&
+            !["1", "2"].includes(currentBrush.id) && <CustomBrushEdit />}
 
           {/* <CurrentHex /> */}
 
@@ -129,12 +133,12 @@ function App() {
                   <div
                     key={colIndex + 1}
                     id={`${rowIndex + 1}-${colIndex + 1}`}
-                    className={`hexagon hover:transition-none hover:delay-0 hover:cursor-pointer ${
+                    className={`hexagon hover:transition-none hover:delay-0 hover:cursor-pointer hover:bg-white ${
                       hex?.type.color
-                        ? `after:bg-[${hex.type.color}]`
+                        ? `after:bg-[${hex.type.color}] hover:after:bg-white/40`
                         : currentHex == `${rowIndex}-${colIndex}`
                         ? "after:bg-white/20"
-                        : "after:bg-black hover:bg-white"
+                        : "after:bg-black"
                     }`}
                     style={{
                       backgroundColor: hex?.type.color || "",
