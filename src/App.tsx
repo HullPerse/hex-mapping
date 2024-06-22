@@ -101,7 +101,7 @@ function App() {
     >
       <TransformWrapper
         initialScale={0.5}
-        minScale={0.5}
+        minScale={0.3}
         doubleClick={{ disabled: true }}
         panning={{ allowLeftClickPan: false }}
         disablePadding

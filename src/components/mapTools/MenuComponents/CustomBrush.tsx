@@ -172,7 +172,7 @@ export default function CustomBrush() {
         <div className="w-full">
           <div className="inline-flex gap-1">
             <span>Scale:</span>
-            <span className="text-accent">{width}</span>
+            <span className="text-accent">{scale}</span>
           </div>
           <Slider
             defaultValue={[scale]}
