@@ -13,7 +13,16 @@ export default function Brush() {
   } = useContext(MapContext);
 
   const [allBrushes, setAllBrushes] = useState<
-    { id: string; title: string; color: string; clickable: boolean }[]
+    {
+      id: string;
+      title: string;
+      color: string;
+      clickable: boolean;
+      image: string | null;
+      height: number;
+      width: number;
+      scale: number;
+    }[]
   >([]);
 
   useEffect(() => {
@@ -63,7 +72,17 @@ export default function Brush() {
             style={{
               backgroundColor: item.color ? item.color : "",
             }}
-          ></div>
+          >
+            {item.image && (
+              <img
+                src={item.image}
+                alt="brush"
+                style={{
+                  transform: `translate(${item.width}%, ${item.height}%) scale(${item.scale})`,
+                }}
+              />
+            )}
+          </div>
           <p className="max-w-[106px] text-ellipsis overflow-hidden text-center font-bold border-t border-white">
             {item.title}
           </p>

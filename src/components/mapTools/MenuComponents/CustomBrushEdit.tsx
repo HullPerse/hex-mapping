@@ -4,14 +4,24 @@ import { MapContext } from "@/provider/hexMapProvider";
 import { Switch } from "@/components/ui/switch";
 import { useContext, useRef, useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
+import { Slider } from "@/components/ui/slider";
 
 export default function CustomBrushEdit() {
-  const { currentBrush, customBrushes, setCustomBrushes, setAddBrush } =
-    useContext(MapContext);
+  const {
+    currentBrush,
+    customBrushes,
+    setCustomBrushes,
+    setAddBrush,
+    setCurrentBrush,
+  } = useContext(MapContext);
 
   const [title, setTitle] = useState<string>("");
   const [color, setColor] = useState<string>("#ffffff");
   const [clickable, setClickable] = useState<boolean>(false);
+  const [image, setImage] = useState<string | null>(null);
+  const [height, setHeight] = useState<number>(0);
+  const [width, setWidth] = useState<number>(0);
+  const [scale, setScale] = useState<number>(1);
 
   const titleRef = useRef<HTMLInputElement>(null);
 
@@ -20,6 +30,10 @@ export default function CustomBrushEdit() {
       setTitle(currentBrush.title);
       setColor(currentBrush.color);
       setClickable(currentBrush.clickable);
+      setImage(currentBrush.image);
+      setHeight(currentBrush.height);
+      setWidth(currentBrush.width);
+      setScale(currentBrush.scale);
     }
   }, [currentBrush]);
 
@@ -31,6 +45,10 @@ export default function CustomBrushEdit() {
       title: string;
       color: string;
       clickable: boolean;
+      image: string | null;
+      height: number;
+      width: number;
+      scale: number;
     }[] = [];
 
     const findBrush = customBrushes.find(
@@ -42,12 +60,46 @@ export default function CustomBrushEdit() {
     findBrush.title = title;
     findBrush.color = color;
     findBrush.clickable = clickable;
+    findBrush.image = image;
+    findBrush.height = height;
+    findBrush.width = width;
+    findBrush.scale = scale;
 
-    brushesArray.push(...customBrushes);
+    const allBrushes = customBrushes.filter(
+      brush => brush.id !== currentBrush?.id
+    );
+
+    brushesArray.push(...allBrushes);
     brushesArray.push(findBrush);
 
     localStorage.setItem("brushes", JSON.stringify(brushesArray));
     setCustomBrushes(brushesArray);
+    return setAddBrush(false);
+  };
+
+  const handleDelete = () => {
+    const brushesArray: {
+      id: string;
+      title: string;
+      color: string;
+      clickable: boolean;
+      image: string | null;
+      height: number;
+      width: number;
+      scale: number;
+    }[] = [];
+
+    const findBrush = customBrushes.filter(
+      brush => brush.id !== currentBrush?.id
+    );
+
+    if (!findBrush) return;
+
+    brushesArray.push(...findBrush);
+
+    localStorage.setItem("brushes", JSON.stringify(findBrush));
+    setCustomBrushes(findBrush);
+    setCurrentBrush(null);
     return setAddBrush(false);
   };
 
@@ -58,7 +110,7 @@ export default function CustomBrushEdit() {
           ref={titleRef}
           /* @ts-expect-error next-line */
           onInput={e => setTitle(e.target.value)}
-          value={title}
+          value={title || ""}
           type="text"
           placeholder="Title"
           className="w-full rounded active:outline-none active:border-white focus:outline-none focus:border-white border-white mx-2"
@@ -67,29 +119,102 @@ export default function CustomBrushEdit() {
       </div>
       <div className="inline-flex justify-between px-2">
         <section className="flex flex-grow justify-center">
-          <div className="max-h-[151px] border border-white rounded items-center justify-center">
+          <div className="flex flex-col max-h-[151px] border border-white rounded items-center justify-center">
             <div
               className={`flex hexagon items-center justify-center delay-0 transition-none border ${
                 !color && "after:bg-black"
               }`}
               style={{
-                backgroundColor: color,
+                backgroundColor: color || "",
               }}
-            ></div>
-            <p className="max-w-[106px] text-ellipsis overflow-hidden text-center font-bold border-t border-white">
+            >
+              {image && (
+                <img
+                  src={image}
+                  alt="brush"
+                  style={{
+                    transform: `translate(${width}%, ${height}%) scale(${scale})`,
+                  }}
+                />
+              )}
+            </div>
+            <p className="min-w-[106px] max-w-[106px] text-ellipsis overflow-hidden text-center font-bold border-t border-white">
               {title}
             </p>
           </div>
         </section>
         <div className="flex flex-col">
-          <HexColorPicker color={color} onChange={setColor} />
+          <HexColorPicker color={color || ""} onChange={setColor} />
+        </div>
+      </div>
+      <div className="flex flex-col mx-2">
+        <div className="flex inline-flex gap-2">
           <Input
-            value={color}
+            value={image || ""}
+            /* @ts-expect-error next-line */
+            onInput={e => setImage(e.target.value)}
+            type="text"
+            placeholder="Image Url"
+            className="w-full rounded active:outline-none active:border-white focus:outline-none focus:border-white border-white mt-2"
+          />
+          <Input
+            value={color || ""}
             /* @ts-expect-error next-line */
             onInput={e => setColor(e.target.value)}
             type="text"
             placeholder="Color"
             className="w-full rounded active:outline-none active:border-white focus:outline-none focus:border-white border-white mt-2"
+          />
+        </div>
+
+        <div className="inline-flex w-full mt-4 gap-2">
+          <div className="w-full">
+            <div className="inline-flex gap-1">
+              <span>Height:</span>
+              <span className="text-accent">{height}</span>
+            </div>
+            <Slider
+              defaultValue={[height]}
+              min={-50}
+              max={50}
+              step={1}
+              onValueChange={e => {
+                setHeight(e[0]);
+              }}
+              disabled={!image}
+            />
+          </div>
+          <div className="w-full">
+            <div className="inline-flex gap-1">
+              <span>Width:</span>
+              <span className="text-accent">{width}</span>
+            </div>
+            <Slider
+              defaultValue={[width]}
+              min={-50}
+              max={50}
+              step={1}
+              onValueChange={e => {
+                setWidth(e[0]);
+              }}
+              disabled={!image}
+            />
+          </div>
+        </div>
+        <div className="w-full">
+          <div className="inline-flex gap-1">
+            <span>Scale:</span>
+            <span className="text-accent">{scale}</span>
+          </div>
+          <Slider
+            defaultValue={[scale]}
+            min={0.1}
+            max={10}
+            step={0.1}
+            onValueChange={e => {
+              setScale(e[0]);
+            }}
+            disabled={!image}
           />
         </div>
       </div>
@@ -98,7 +223,7 @@ export default function CustomBrushEdit() {
         <p className="text-white font-bold">Clickable</p>
       </section>
 
-      <div className="flex w-full px-2 mb-1">
+      <div className="flex flex-col w-full px-2 mb-1 gap-1">
         <Button
           className="w-full"
           onClick={handleUpdate}
@@ -108,11 +233,16 @@ export default function CustomBrushEdit() {
             !currentBrush ||
             (currentBrush.title == title &&
               currentBrush.color == color &&
-              currentBrush.clickable == clickable)
+              currentBrush.clickable == clickable &&
+              currentBrush.image == image &&
+              currentBrush.height == height &&
+              currentBrush.width == width &&
+              currentBrush.scale == scale)
           }
         >
           Save Changes
         </Button>
+        <Button onClick={handleDelete}>Delete Brush</Button>
       </div>
     </section>
   );

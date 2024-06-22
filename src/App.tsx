@@ -13,6 +13,10 @@ interface HexBrush {
   title: string;
   color: string;
   clickable: boolean;
+  image: string | null;
+  height: number;
+  width: number;
+  scale: number;
 }
 
 interface CustomHex {
@@ -53,6 +57,10 @@ function App() {
           title: currentBrush.title,
           color: currentBrush.color,
           clickable: currentBrush.clickable,
+          image: currentBrush.image,
+          height: currentBrush.height,
+          width: currentBrush.width,
+          scale: currentBrush.scale,
         },
       });
 
@@ -142,7 +150,15 @@ function App() {
                     onClick={() => handleClick(rowIndex, colIndex)}
                   >
                     <div className="flex w-full h-full items-center justify-center">
-                      {currentHex == `${rowIndex}-${colIndex}` && "Current Hex"}
+                      {hex?.type.image && (
+                        <img
+                          src={hex?.type.image}
+                          alt="brush"
+                          style={{
+                            transform: `translate(${hex?.type.width}%, ${hex?.type.height}%) scale(${hex?.type.scale})`,
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
                 );

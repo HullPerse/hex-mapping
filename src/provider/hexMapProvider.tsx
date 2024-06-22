@@ -10,6 +10,10 @@ interface HexBrush {
   title: string;
   color: string;
   clickable: boolean;
+  image: string | null;
+  height: number;
+  width: number;
+  scale: number;
 }
 
 interface CustomHex {
