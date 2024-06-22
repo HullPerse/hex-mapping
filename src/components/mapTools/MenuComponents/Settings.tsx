@@ -5,7 +5,16 @@ import { useContext, useRef } from "react";
 
 interface hexProps {
   id: string;
-  type: { id: string; title: string; color: string; clickable: boolean };
+  type: {
+    id: string;
+    title: string;
+    color: string;
+    clickable: boolean;
+    image: string | null;
+    height: number;
+    width: number;
+    scale: number;
+  };
 }
 
 export default function Settings() {
